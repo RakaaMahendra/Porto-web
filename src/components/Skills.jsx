@@ -86,7 +86,9 @@ export default function Skills() {
                     key={skill}
                     className={`inline-flex items-center gap-2 px-4 py-2 rounded-full border ${category.borderColor} ${category.hoverBg} bg-dark/40 text-slate-300 text-sm transition-all duration-300 cursor-default`}
                   >
-                    <span className={`w-1.5 h-1.5 rounded-full ${category.dotColor}`} />
+                    <span
+                      className={`w-1.5 h-1.5 rounded-full ${category.dotColor}`}
+                    />
                     {skill}
                   </span>
                 ))}

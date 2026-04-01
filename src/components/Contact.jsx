@@ -1,7 +1,56 @@
-import { Mail, Phone, MapPin, Send, Github, Linkedin } from "lucide-react";
+import { useState } from "react";
+import {
+  Mail,
+  Phone,
+  MapPin,
+  Send,
+  Github,
+  Linkedin,
+  CheckCircle,
+  AlertCircle,
+  Loader,
+} from "lucide-react";
 import SectionWrapper from "./SectionWrapper";
 
+const WEB3FORMS_KEY = "968593a8-271a-4c10-9fbe-a14adaa6ab10"; // Ganti dengan access key dari https://web3forms.com
+
 export default function Contact() {
+  const [status, setStatus] = useState("idle"); // idle | sending | success | error
+
+  async function handleSubmit(e) {
+    e.preventDefault();
+    setStatus("sending");
+
+    const formData = new FormData(e.target);
+    formData.append("access_key", WEB3FORMS_KEY);
+    formData.append("to", "rakamahendra750@gmail.com");
+    formData.append(
+      "subject",
+      `Portfolio Message from ${formData.get("name")}`
+    );
+    formData.append("from_name", formData.get("name"));
+    formData.append("replyto", formData.get("email"));
+
+    try {
+      const res = await fetch("https://api.web3forms.com/submit", {
+        method: "POST",
+        body: formData,
+      });
+      const data = await res.json();
+      if (data.success) {
+        setStatus("success");
+        e.target.reset();
+        setTimeout(() => setStatus("idle"), 4000);
+      } else {
+        setStatus("error");
+        setTimeout(() => setStatus("idle"), 4000);
+      }
+    } catch {
+      setStatus("error");
+      setTimeout(() => setStatus("idle"), 4000);
+    }
+  }
+
   return (
     <SectionWrapper id="contact" className="py-24 px-4 bg-dark-light/30">
       <div className="max-w-4xl mx-auto">
@@ -99,18 +148,9 @@ export default function Contact() {
             <h3 className="text-lg font-bold text-white mb-6">
               Send a Message
             </h3>
-            <form
-              onSubmit={(e) => {
-                e.preventDefault();
-                const formData = new FormData(e.target);
-                const subject = encodeURIComponent(
-                  `Message from ${formData.get("name")}`
-                );
-                const body = encodeURIComponent(formData.get("message"));
-                window.location.href = `mailto:rakamahendra750@gmail.com?subject=${subject}&body=${body}`;
-              }}
-              className="space-y-4"
-            >
+            <form onSubmit={handleSubmit} className="space-y-4">
+              {/* Honeypot anti-spam */}
+              <input type="checkbox" name="botcheck" className="hidden" />
               <div>
                 <label
                   htmlFor="name"
@@ -123,7 +163,8 @@ export default function Contact() {
                   id="name"
                   name="name"
                   required
-                  className="w-full px-4 py-2.5 rounded-xl bg-dark-lighter/50 border border-white/5 text-white text-sm placeholder:text-slate-600 focus:outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/25 transition-all"
+                  disabled={status === "sending"}
+                  className="w-full px-4 py-2.5 rounded-xl bg-dark-lighter/50 border border-white/5 text-white text-sm placeholder:text-slate-600 focus:outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/25 transition-all disabled:opacity-50"
                   placeholder="Raka"
                 />
               </div>
@@ -139,7 +180,8 @@ export default function Contact() {
                   id="email"
                   name="email"
                   required
-                  className="w-full px-4 py-2.5 rounded-xl bg-dark-lighter/50 border border-white/5 text-white text-sm placeholder:text-slate-600 focus:outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/25 transition-all"
+                  disabled={status === "sending"}
+                  className="w-full px-4 py-2.5 rounded-xl bg-dark-lighter/50 border border-white/5 text-white text-sm placeholder:text-slate-600 focus:outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/25 transition-all disabled:opacity-50"
                   placeholder="raka@example.com"
                 />
               </div>
@@ -155,17 +197,41 @@ export default function Contact() {
                   name="message"
                   required
                   rows={4}
-                  className="w-full px-4 py-2.5 rounded-xl bg-dark-lighter/50 border border-white/5 text-white text-sm placeholder:text-slate-600 focus:outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/25 transition-all resize-none"
+                  disabled={status === "sending"}
+                  className="w-full px-4 py-2.5 rounded-xl bg-dark-lighter/50 border border-white/5 text-white text-sm placeholder:text-slate-600 focus:outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/25 transition-all resize-none disabled:opacity-50"
                   placeholder="Your message here..."
                 />
               </div>
               <button
                 type="submit"
-                className="w-full py-3 bg-gradient-to-r from-primary to-accent text-white font-semibold rounded-xl hover:opacity-90 transition-all hover:scale-[1.02] flex items-center justify-center gap-2 shadow-lg shadow-primary/25"
+                disabled={status === "sending"}
+                className="w-full py-3 bg-gradient-to-r from-primary to-accent text-white font-semibold rounded-xl hover:opacity-90 transition-all hover:scale-[1.02] flex items-center justify-center gap-2 shadow-lg shadow-primary/25 disabled:opacity-60 disabled:hover:scale-100"
               >
-                <Send size={16} />
-                Send Message
+                {status === "sending" ? (
+                  <>
+                    <Loader size={16} className="animate-spin" />
+                    Sending...
+                  </>
+                ) : (
+                  <>
+                    <Send size={16} />
+                    Send Message
+                  </>
+                )}
               </button>
+
+              {status === "success" && (
+                <div className="flex items-center gap-2 text-green-400 text-sm bg-green-400/10 border border-green-400/20 rounded-xl px-4 py-3">
+                  <CheckCircle size={16} />
+                  Message sent successfully! I'll get back to you soon.
+                </div>
+              )}
+              {status === "error" && (
+                <div className="flex items-center gap-2 text-red-400 text-sm bg-red-400/10 border border-red-400/20 rounded-xl px-4 py-3">
+                  <AlertCircle size={16} />
+                  Failed to send. Please try again or email me directly.
+                </div>
+              )}
             </form>
           </div>
         </div>
