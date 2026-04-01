@@ -4,43 +4,52 @@ const skillCategories = [
   {
     title: "Frontend",
     color: "from-blue-500 to-cyan-400",
+    borderColor: "border-blue-500/30",
+    hoverBg: "hover:bg-blue-500/10",
+    dotColor: "bg-blue-400",
     skills: [
-      { name: "React JS", level: 90 },
-      { name: "Redux", level: 85 },
-      { name: "Vue.js", level: 75 },
-      { name: "React Native", level: 80 },
-      { name: "HTML & CSS", level: 90 },
-      { name: "Tailwind CSS", level: 85 },
-      { name: "Pinia", level: 70 },
-      { name: "Apollo Client", level: 75 },
+      "React JS",
+      "Redux",
+      "Vue.js",
+      "React Native",
+      "HTML & CSS",
+      "Tailwind CSS",
+      "Pinia",
+      "Apollo Client",
     ],
   },
   {
     title: "Backend",
     color: "from-purple-500 to-pink-400",
+    borderColor: "border-purple-500/30",
+    hoverBg: "hover:bg-purple-500/10",
+    dotColor: "bg-purple-400",
     skills: [
-      { name: "Node.js", level: 88 },
-      { name: "Express", level: 88 },
-      { name: "PostgreSQL", level: 85 },
-      { name: "MongoDB", level: 82 },
-      { name: "GraphQL", level: 80 },
-      { name: "REST API", level: 90 },
-      { name: "Sequelize", level: 82 },
-      { name: "Redis", level: 70 },
+      "Node.js",
+      "Express",
+      "PostgreSQL",
+      "MongoDB",
+      "GraphQL",
+      "REST API",
+      "Sequelize",
+      "Redis",
     ],
   },
   {
     title: "Tools & Cloud",
     color: "from-amber-500 to-orange-400",
+    borderColor: "border-amber-500/30",
+    hoverBg: "hover:bg-amber-500/10",
+    dotColor: "bg-amber-400",
     skills: [
-      { name: "JavaScript", level: 92 },
-      { name: "TypeScript", level: 75 },
-      { name: "Git & GitHub", level: 85 },
-      { name: "AWS", level: 70 },
-      { name: "Apollo Server", level: 78 },
-      { name: "Looker Studio", level: 72 },
-      { name: "Power BI", level: 65 },
-      { name: "SQL", level: 85 },
+      "JavaScript",
+      "TypeScript",
+      "Git & GitHub",
+      "AWS",
+      "Apollo Server",
+      "Looker Studio",
+      "Power BI",
+      "SQL",
     ],
   },
 ];
@@ -71,22 +80,15 @@ export default function Skills() {
               >
                 {category.title}
               </h3>
-              <div className="space-y-4">
+              <div className="flex flex-wrap gap-3">
                 {category.skills.map((skill) => (
-                  <div key={skill.name}>
-                    <div className="flex justify-between text-sm mb-1">
-                      <span className="text-slate-300">{skill.name}</span>
-                      <span className="text-slate-500 font-mono text-xs">
-                        {skill.level}%
-                      </span>
-                    </div>
-                    <div className="h-1.5 bg-dark-lighter rounded-full overflow-hidden">
-                      <div
-                        className={`h-full rounded-full bg-gradient-to-r ${category.color} transition-all duration-1000`}
-                        style={{ width: `${skill.level}%` }}
-                      />
-                    </div>
-                  </div>
+                  <span
+                    key={skill}
+                    className={`inline-flex items-center gap-2 px-4 py-2 rounded-full border ${category.borderColor} ${category.hoverBg} bg-dark/40 text-slate-300 text-sm transition-all duration-300 cursor-default`}
+                  >
+                    <span className={`w-1.5 h-1.5 rounded-full ${category.dotColor}`} />
+                    {skill}
+                  </span>
                 ))}
               </div>
             </div>
